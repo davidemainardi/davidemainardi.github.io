@@ -371,6 +371,15 @@ nav.is-open .nav-toggle-bars span:nth-child(3){
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: rgba(127,176,105,0.35) transparent;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.slide > .wrap.panel.is-overflow{
+  height: 100%;
+  max-height: 100%;
+}
+.slide > .wrap.panel.is-overflow .panel-body{
+  flex: 1 1 auto;
 }
 .panel-body.is-scrollable::-webkit-scrollbar{ width: 4px; }
 .panel-body.is-scrollable::-webkit-scrollbar-thumb{
@@ -550,7 +559,7 @@ nav.is-open .nav-toggle-bars span:nth-child(3){
 .term-cmd{color:var(--parchment); white-space:pre-wrap;}
 .term-out{color:var(--parchment-dim); margin:2px 0 8px; white-space:normal;}
 .term-out .hl{color:var(--rune-bright);}
-.term-hidden{display:none;}
+.term-hidden{display:none !important;}
 .cursor{
   display:inline-block; width:8px; height:15px; background:var(--rune-bright);
   vertical-align:middle; margin-left:2px;
@@ -981,8 +990,8 @@ li.content-placeholder{
 
   .terminal{ margin-top: clamp(8px, 1.4vh, 14px); display:block !important; }
   .term-body{ font-size: clamp(10px, 1.4vh, 12px); padding: 10px 12px; line-height:1.45; }
-  .terminal .term-out,
-  .terminal .term-line{ display:block; }
+  .terminal .term-out:not(.term-hidden),
+  .terminal .term-line:not(.term-hidden){ display:block; }
 
   .chapter-title{ font-size: clamp(14px, 2.6vh, 20px); }
   .chapter-lede{
@@ -1037,31 +1046,102 @@ li.content-placeholder{
 }
 
 @media (max-width:420px){
-  body{ font-size: 11px; }
-  .hero-title{ font-size: clamp(15px, 5.5vw, 22px); }
-  .hero-cta .btn{ min-width:0; }
-  .contact-links a{ min-width: calc(50% - 4px); flex: 1 1 calc(50% - 4px); }
+  :root{
+    --nav-h: 42px;
+    --footer-h: 36px;
+  }
+  body{ font-size: 11px; line-height: 1.45; }
+
+  .slide{
+    padding: 6px max(8px, var(--safe-l)) 6px max(8px, var(--safe-r));
+  }
+  .panel-body{
+    padding: 14px 16px 16px;
+  }
+  .panel-chrome{ padding: 5px 8px; }
+  .panel-corner{ font-size:9px; }
+
+  .hero-kicker{ font-size:8px; margin-bottom:4px; gap:5px; }
+  .hero-title{
+    max-width:none;
+    font-size: clamp(15px, 5.2vw, 20px);
+    line-height:1.2;
+  }
+  .hero-sub{ font-size: 11px; margin-top: 8px; }
+  .hero-cta{ gap:6px; margin-top: 10px; }
+  .hero-cta .btn{ padding:6px 10px; font-size:10px; min-width:0; }
+
+  .terminal{ margin-top: 10px; }
+  .term-body{ font-size: 10px; padding: 8px 10px; line-height:1.4; }
+  .term-out{ margin: 2px 0 6px; }
+
+  .chapter-title{ font-size: clamp(13px, 4.5vw, 17px); }
+  .chapter-lede{ font-size: 10px; margin-bottom: 8px; }
+  .chapter-head{ margin-bottom: 4px; }
+
+  .skill-grid{ gap: 4px; }
+  .skill-card{ padding: 6px 2px 4px; }
+  .skill-card h3{ font-size:9px; margin-bottom: 3px; }
+  .skill-blurb{ font-size:9px; margin-bottom: 4px; line-height:1.3; }
+  .tag{ font-size:8px; padding:1px 4px; }
+
+  .project{ padding: 6px 0; }
+  .project-name{ font-size:11px; }
+  .project-desc{ font-size:10px; }
+  .project-status{ font-size:8px; }
+
+  .ledger-item{ padding: 6px 0 6px 12px; }
+  .ledger-role{ font-size:11px; }
+  .ledger-desc{ font-size:10px; }
+
+  .hoard{ gap: 6px 8px; }
+  .hoard-item .node-name{ font-size:10px; }
+  .hoard-item p{ font-size:9px; }
+
+  .contact-links a{
+    min-width: calc(50% - 4px);
+    flex: 1 1 calc(50% - 4px);
+    padding: 7px 8px;
+    font-size:10px;
+  }
+  .d20{ width: 28px; height: 28px; }
+  .d20-wrap{ padding: 4px 0; }
+
   .footer-credit .note{ display:none; }
+  .footer-credit,
+  .footer-sigil,
+  .footer-meta{ font-size:8px; }
+  .site-footer .wrap{ gap:4px; padding-top:6px; padding-bottom:6px; }
 }
 
-/* Viewport bassi: riduci tipografia, non nascondere contenuti */
-@media (max-height:720px){
-  body{ font-size: 12px; }
-  .hero-title{ font-size: clamp(15px, 3.8vh, 24px); }
-  .hero-sub{ font-size: 11px; }
-  .hero-kicker{ display:inline-flex; font-size:9px; }
-  .panel-corner{ display:block; font-size:10px; }
-  .d20-wrap{ display:flex; padding: 4px 0; }
-  .d20{ width: 32px; height: 32px; }
-  .skill-blurb{ display:block; }
-  .project-desc,
-  .ledger-desc,
-  .hero-sub{
-    display:block;
-    -webkit-line-clamp:unset;
-    overflow:visible;
-  }
-  .terminal{ display:block !important; }
+@media (max-width:360px){
+  body{ font-size: 10px; }
+  .nav-brand{ font-size:12px; }
+  .hero-title{ font-size: clamp(14px, 5vw, 18px); }
+  .hero-sub{ font-size: 10px; }
+  .panel-body{ padding: 12px 14px 14px; }
+  .skill-grid{ gap: 2px; }
+  .footer-sigil{ display:none; }
+  .site-footer .wrap{ grid-template-columns: 1fr 1fr; }
+  .footer-credit{ grid-column:1; }
+  .footer-meta{ grid-column:2; }
+}
+
+/* Viewport bassi / landscape phone: compatta senza nascondere pezzi */
+@media (max-height:700px){
+  body{ font-size: 11px; line-height: 1.4; }
+  .hero-title{ font-size: clamp(14px, 3.6vh, 22px); }
+  .hero-sub{ font-size: 10px; margin-top: 6px; }
+  .hero-kicker{ font-size:8px; margin-bottom:3px; }
+  .hero-cta{ margin-top: 8px; }
+  .terminal{ margin-top: 8px; }
+  .term-body{ padding: 8px 10px; font-size: 10px; }
+  .term-out{ margin: 1px 0 4px; }
+  .panel-body{ padding: 12px 14px; }
+  .chapter-lede{ margin-bottom: 6px; font-size: 10px; }
+  .d20-wrap{ padding: 2px 0; }
+  .d20{ width: 28px; height: 28px; }
+  .slide-hint{ font-size:8px; }
 }
 
 /* ============ D20 ============ */
@@ -1585,6 +1665,11 @@ window.__portfolioProfileReady = new Promise((resolve) => {
       const hidden = idx === 0 ? '' : ' term-hidden';
       return `<div class="term-line${hidden}" data-term-step="${idx}"><span class="term-prompt">$ </span><span class="term-cmd" data-cmd="${esc(step.command)}"></span></div><div class="term-out term-hidden" data-term-out="${idx}">${formatTerminalOutput(step.output)}</div>`;
     }).join('') + `<div class="term-line term-hidden" id="line-prompt-end"><span class="term-prompt">$ </span></div><span class="cursor" id="term-cursor" hidden aria-hidden="true"></span>`;
+
+    // Riavvia animazione dopo aver ricostruito il DOM
+    if(typeof window.__startTerminalAnimation === 'function'){
+      window.__startTerminalAnimation();
+    }
   }
 
   function renderSkills(rows){
@@ -2285,7 +2370,8 @@ window.__portfolioProfileReady = new Promise((resolve) => {
 
 // Terminal typing (N steps from Supabase / fallback)
 (function(){
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let runId = 0;
 
   function show(el){ if(el) el.classList.remove('term-hidden'); }
 
@@ -2310,44 +2396,75 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     host.appendChild(cursor);
   }
 
-  async function typeInto(el, text){
+  async function typeInto(el, text, token){
     el.textContent = '';
     const chars = String(text || '');
     for(let i = 0; i < chars.length; i++){
+      if(token !== runId) return false;
       el.textContent += chars.charAt(i);
-      await sleep(18 + Math.random() * 22);
+      await sleep(16 + Math.random() * 20);
+    }
+    return token === runId;
+  }
+
+  function refitIntro(){
+    if(typeof window.__fitIntroSlide === 'function'){
+      window.__fitIntroSlide();
     }
   }
 
-  async function run(){
+  function revealAndScroll(el){
+    show(el);
+    if(el && el.scrollIntoView){
+      try{
+        el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      }catch(_e){
+        el.scrollIntoView(false);
+      }
+    }
+    refitIntro();
+  }
+
+  async function runTerminalAnimation(){
+    const token = ++runId;
+    const reduced = reducedMq.matches;
+    const body = document.getElementById('term-body');
+    if(!body) return;
+
+    // Attendi i dati Supabase (con timeout di sicurezza)
     if(window.__portfolioProfileReady){
       await Promise.race([
         window.__portfolioProfileReady,
-        new Promise((r) => setTimeout(r, 1500))
+        new Promise((r) => setTimeout(r, 2500))
       ]);
     }
-
-    const body = document.getElementById('term-body');
-    if(!body) return;
+    if(token !== runId) return;
 
     const steps = window.__terminalSteps || [];
     const hasDynamic = steps.length && body.querySelector('[data-term-step]');
 
     if(!hasDynamic){
-      const typed = body.querySelector('#typed-cmd, [data-term-step="0"] .term-cmd, .term-cmd');
-      const cmd = (typed && (typed.getAttribute('data-cmd') || typed.textContent)) || '';
+      // Static fallback: digita il primo, poi rivela gli altri in sequenza
+      const typed = body.querySelector('#typed-cmd, .term-cmd');
+      const cmd = (typed && (typed.getAttribute('data-cmd') || '').trim())
+        || (typed && typed.textContent.trim())
+        || '';
       if(reduced){
-        if(typed) typed.textContent = cmd;
+        if(typed && cmd) typed.textContent = cmd;
         body.querySelectorAll('.term-hidden').forEach(show);
+        parkCursor(document.getElementById('line-prompt-end'));
+        refitIntro();
         return;
       }
       if(typed && cmd){
         attachCursor(typed.parentElement);
         await sleep(200);
-        await typeInto(typed, cmd);
-        for(const el of body.querySelectorAll('.term-hidden')){
-          show(el);
-          await sleep(280);
+        if(!(await typeInto(typed, cmd, token))) return;
+        const hidden = [...body.querySelectorAll('.term-hidden')];
+        for(const el of hidden){
+          if(token !== runId) return;
+          revealAndScroll(el);
+          await sleep(320);
         }
         parkCursor(document.getElementById('line-prompt-end') || typed.parentElement);
       }
@@ -2365,33 +2482,44 @@ window.__portfolioProfileReady = new Promise((resolve) => {
       });
       show(document.getElementById('line-prompt-end'));
       parkCursor(document.getElementById('line-prompt-end'));
+      refitIntro();
       return;
     }
 
-    await sleep(240);
+    await sleep(200);
+    if(token !== runId) return;
 
     for(let idx = 0; idx < steps.length; idx++){
+      if(token !== runId) return;
       const step = steps[idx];
       const line = body.querySelector(`[data-term-step="${idx}"]`);
       const cmdEl = line && line.querySelector('.term-cmd');
       const out = body.querySelector(`[data-term-out="${idx}"]`);
       if(!line || !cmdEl) continue;
 
-      show(line);
+      revealAndScroll(line);
       attachCursor(line);
-      await sleep(120);
-      await typeInto(cmdEl, step.command || '');
-      await sleep(220);
-      show(out);
-      await sleep(360);
+      await sleep(80);
+      if(!(await typeInto(cmdEl, step.command || '', token))) return;
+      await sleep(180);
+      if(token !== runId) return;
+      revealAndScroll(out);
+      await sleep(300);
     }
 
+    if(token !== runId) return;
     const end = document.getElementById('line-prompt-end');
-    show(end);
+    revealAndScroll(end);
     parkCursor(end);
+    refitIntro();
   }
 
-  run();
+  window.__startTerminalAnimation = function(){
+    runTerminalAnimation().catch(() => {});
+  };
+
+  // Avvio iniziale
+  window.__startTerminalAnimation();
 })();
 
 // Deck — navigazione a diapositive
@@ -2452,33 +2580,38 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     body.style.marginBottom = '0';
     body.style.height = 'auto';
     body.classList.remove('is-scrollable');
-    panel.style.maxHeight = slide.clientHeight + 'px';
-    // Non allungare il pannello a tutto viewport: lascia vedere matrix/dadi intorno
+    panel.classList.remove('is-overflow');
     panel.style.height = 'auto';
+    panel.style.maxHeight = '';
 
     void body.offsetHeight;
 
+    const cs = getComputedStyle(slide);
+    const padY = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+    const maxPanel = Math.max(120, slide.clientHeight - padY);
     const chromeH = chrome ? chrome.offsetHeight : 0;
-    const available = Math.max(0, panel.clientHeight - chromeH);
-    // Se il contenuto supera lo slide, limita il body e abilita scroll
-    const maxBody = Math.max(0, slide.clientHeight - chromeH);
-    if(available <= 0 && maxBody <= 0) return;
-
+    const maxBody = Math.max(80, maxPanel - chromeH);
     const needed = body.scrollHeight;
-    const room = Math.max(available, maxBody);
 
-    // Mobile/desktop: scroll interno se il contenuto non ci sta, senza forzare altezza 100%
-    if(needed > room + 2){
+    panel.style.maxHeight = maxPanel + 'px';
+
+    if(needed > maxBody + 2){
+      // Slide troppo alta: pannello a piena altezza utile + scroll interno
+      panel.classList.add('is-overflow');
+      panel.style.height = maxPanel + 'px';
       body.classList.add('is-scrollable');
-      body.style.height = room + 'px';
-      if(isMobile()) return;
+      body.style.height = maxBody + 'px';
+      return;
     }
+
+    // Contenuto ok: pannello aderente (sfondo visibile intorno)
+    panel.style.height = 'auto';
 
     if(isMobile()) return;
 
-    if(needed <= room + 2) return;
-
-    const scale = Math.max(0.55, Math.min(1, room / needed));
+    // Desktop: se ancora stretto (edge case), scala leggermente
+    if(needed <= maxBody + 2) return;
+    const scale = Math.max(0.55, Math.min(1, maxBody / needed));
     body.style.transformOrigin = 'top center';
     body.style.transform = 'scale(' + scale + ')';
     body.style.marginBottom = (-needed * (1 - scale)) + 'px';
@@ -2487,6 +2620,11 @@ window.__portfolioProfileReady = new Promise((resolve) => {
   function fitAll(){
     slides.forEach(fitSlide);
   }
+
+  window.__fitIntroSlide = function(){
+    const intro = document.getElementById('intro');
+    if(intro) fitSlide(intro);
+  };
 
   function layout(){
     slideH = deck.clientHeight;
