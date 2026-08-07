@@ -1484,6 +1484,28 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     return [];
   }
 
+  let ekanaByGlyph = new Map();
+
+  function ingestEkana(rows){
+    ekanaByGlyph = new Map();
+    (rows || []).forEach(r => {
+      if(r && r.glyph) ekanaByGlyph.set(String(r.glyph), r);
+    });
+  }
+
+  function formatEkanaTitle(ch){
+    const row = ekanaByGlyph.get(String(ch || ''));
+    if(!row) return '';
+    const meaning = row.meaning || '';
+    if(row.name) return `${row.glyph} ${row.name} — ${meaning}`;
+    return `${row.glyph} — ${meaning}`;
+  }
+
+  function ekanaTitleAttr(ch){
+    const title = formatEkanaTitle(ch);
+    return title ? ` title="${esc(title)}"` : '';
+  }
+
   function getByKeys(obj, keys){
     for(const k of keys){
       if(obj && obj[k] != null && obj[k] !== '') return obj[k];
@@ -1697,12 +1719,13 @@ window.__portfolioProfileReady = new Promise((resolve) => {
 
   function htmlSkillCard(p){
     const title = esc(p.title || '');
-    const glyph = esc(p.glyph || 'ᚲ');
+    const glyphRaw = p.glyph || 'ᚲ';
+    const glyph = esc(glyphRaw);
     const glyphKind = String(p.glyph_kind || 'rune') === 'kana' ? 'kana' : 'rune';
     const blurb = esc(p.blurb || '');
     const tags = parseTags(p.tags).map(t => `<span class="tag">${esc(t)}</span>`).join('');
     return `<div class="skill-card">
-      <h3><span class="skill-glyph ${glyphKind}" aria-hidden="true">${glyph}</span> ${title}</h3>
+      <h3><span class="skill-glyph ${glyphKind}" aria-hidden="true"${ekanaTitleAttr(glyphRaw)}>${glyph}</span> ${title}</h3>
       <p class="skill-blurb">${blurb}</p>
       <div class="skill-tags">${tags}</div>
     </div>`;
@@ -1738,8 +1761,9 @@ window.__portfolioProfileReady = new Promise((resolve) => {
   }
 
   function htmlHomelabItem(p){
+    const glyphRaw = p.glyph || '◉';
     return `<div class="hoard-item">
-      <div class="node-name"><span class="node-glyph" aria-hidden="true">${esc(p.glyph || '◉')}</span> ${esc(p.name || '')}</div>
+      <div class="node-name"><span class="node-glyph" aria-hidden="true"${ekanaTitleAttr(glyphRaw)}>${esc(glyphRaw)}</span> ${esc(p.name || '')}</div>
       <p>${esc(p.description || '')}</p>
     </div>`;
   }
@@ -1749,8 +1773,9 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     const external = /^https?:/i.test(url) || /^mailto:/i.test(url);
     const rel = /^https?:/i.test(url) ? ' rel="noopener noreferrer"' : '';
     const target = /^https?:/i.test(url) ? ' target="_blank"' : '';
+    const glyphRaw = p.glyph || '◆';
     return `<a href="${url}"${target}${rel}>
-      <span class="ch-glyph" aria-hidden="true">${esc(p.glyph || '◆')}</span>
+      <span class="ch-glyph" aria-hidden="true"${ekanaTitleAttr(glyphRaw)}>${esc(glyphRaw)}</span>
       <span class="ch-label">${esc(p.label || 'contatto')}</span>
       <span class="ch-path">${esc(p.path || '')}</span>
     </a>`;
@@ -1890,10 +1915,14 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     const slug = esc(slide.slug);
     const kind = slideKind(slide);
     const path = esc(slide.panel_path || ('~/' + slide.slug));
-    const tl = esc(slide.corner_tl || 'ᚠ');
-    const tr = esc(slide.corner_tr || '序');
-    const bl = esc(slide.corner_bl || '術');
-    const br = esc(slide.corner_br || 'ᚨ');
+    const tlRaw = slide.corner_tl || 'ᚠ';
+    const trRaw = slide.corner_tr || '序';
+    const blRaw = slide.corner_bl || '術';
+    const brRaw = slide.corner_br || 'ᚨ';
+    const tl = esc(tlRaw);
+    const tr = esc(trRaw);
+    const bl = esc(blRaw);
+    const br = esc(brRaw);
     const chrome = `<div class="panel-chrome" aria-hidden="true">
       <div class="panel-dots">
         <span class="term-dot r"></span>
@@ -1902,10 +1931,10 @@ window.__portfolioProfileReady = new Promise((resolve) => {
       </div>
       <div class="panel-title"><span class="host">nyx@grimorio</span>:<span class="path" data-panel-path="${slug}">${path}</span></div>
     </div>`;
-    const corners = `<span class="panel-corner tl" aria-hidden="true">${tl}</span>
-      <span class="panel-corner tr" aria-hidden="true">${tr}</span>
-      <span class="panel-corner bl" aria-hidden="true">${bl}</span>
-      <span class="panel-corner br" aria-hidden="true">${br}</span>`;
+    const corners = `<span class="panel-corner tl" aria-hidden="true"${ekanaTitleAttr(tlRaw)}>${tl}</span>
+      <span class="panel-corner tr" aria-hidden="true"${ekanaTitleAttr(trRaw)}>${tr}</span>
+      <span class="panel-corner bl" aria-hidden="true"${ekanaTitleAttr(blRaw)}>${bl}</span>
+      <span class="panel-corner br" aria-hidden="true"${ekanaTitleAttr(brRaw)}>${br}</span>`;
 
     if(kind === 'hero'){
       return `<header class="hero slide" id="${slug}" data-slide data-kind="hero" data-slide-uuid="${esc(slide.id)}">
@@ -1916,7 +1945,7 @@ window.__portfolioProfileReady = new Promise((resolve) => {
       <div class="hero-inner">
         <div class="hero-copy">
           <p class="hero-kicker">
-            <span class="rune" aria-hidden="true">ᛞ</span>
+            <span class="rune" aria-hidden="true"${ekanaTitleAttr('ᛞ')}>ᛞ</span>
             <span id="hero-kicker-left">capitolo 0</span>
             <span class="sep" aria-hidden="true">·</span>
             <span id="hero-kicker-right">evocazione</span>
@@ -1924,8 +1953,8 @@ window.__portfolioProfileReady = new Promise((resolve) => {
           <h1 class="hero-title">Il codice è magia con <span class="accent">regole più severe</span>.</h1>
           <p class="hero-sub"></p>
           <div class="hero-cta">
-            <a href="#progetti" class="btn btn-primary" id="cta-primary"><span class="btn-glyph" aria-hidden="true">作</span><span class="btn-label">Artefatti</span></a>
-            <a href="#contatti" class="btn btn-ghost" id="cta-secondary"><span class="btn-glyph" aria-hidden="true">門</span><span class="btn-label">Portale</span></a>
+            <a href="#progetti" class="btn btn-primary" id="cta-primary"><span class="btn-glyph" aria-hidden="true"${ekanaTitleAttr('作')}>作</span><span class="btn-label">Artefatti</span></a>
+            <a href="#contatti" class="btn btn-ghost" id="cta-secondary"><span class="btn-glyph" aria-hidden="true"${ekanaTitleAttr('門')}>門</span><span class="btn-label">Portale</span></a>
           </div>
         </div>
         <div class="terminal" aria-label="Terminale di presentazione">
@@ -1968,9 +1997,11 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     menu.innerHTML = items.map(s => {
       const slug = esc(s.slug);
       const label = esc(s.nav_label || s.slug);
-      const kana = esc(s.nav_glyph_kana || '◇');
-      const rune = esc(s.nav_glyph_rune || 'ᚠ');
-      return `<li><a href="#${slug}"><span class="nav-glyph kana" aria-hidden="true">${kana}</span><span class="nav-label">${label}</span><span class="nav-glyph rune" aria-hidden="true">${rune}</span></a></li>`;
+      const kanaRaw = s.nav_glyph_kana || '◇';
+      const runeRaw = s.nav_glyph_rune || 'ᚠ';
+      const kana = esc(kanaRaw);
+      const rune = esc(runeRaw);
+      return `<li><a href="#${slug}"><span class="nav-glyph kana" aria-hidden="true"${ekanaTitleAttr(kanaRaw)}>${kana}</span><span class="nav-label">${label}</span><span class="nav-glyph rune" aria-hidden="true"${ekanaTitleAttr(runeRaw)}>${rune}</span></a></li>`;
     }).join('');
   }
 
@@ -2033,7 +2064,7 @@ window.__portfolioProfileReady = new Promise((resolve) => {
   }
 
   (async function loadSupabaseContent(){
-    const [profileRows, skillsRows, projectsRows, expRows, labRows, contactsRows, ledesRows, terminalRows, slidesRows, blockRows] =
+    const [profileRows, skillsRows, projectsRows, expRows, labRows, contactsRows, ledesRows, terminalRows, slidesRows, blockRows, ekanaRows] =
       await Promise.all([
         readTable('profile'),
         readTable('skills'),
@@ -2044,8 +2075,11 @@ window.__portfolioProfileReady = new Promise((resolve) => {
         readTable('section_leads'),
         readTable('terminal_steps'),
         readTable('slides'),
-        readTable('slide_blocks')
+        readTable('slide_blocks'),
+        readTable('ekana_glyphs')
       ]);
+
+    ingestEkana(ekanaRows);
 
     let blocks = blockRows;
     if((!blocks || !blocks.length) && slidesRows && slidesRows.length){
