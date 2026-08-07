@@ -415,13 +415,23 @@ nav.is-open .nav-toggle-bars span:nth-child(3){
   line-height: 1;
   color: var(--bronze);
   opacity: 0.55;
-  pointer-events: none;
-  z-index: 1;
+  pointer-events: auto;
+  z-index: 6;
+  padding: 6px;
+  margin: -6px;
+  cursor: help;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.panel-corner:hover{
+  opacity: 1;
+  color: var(--rune-bright);
 }
 .panel-corner.tl{ top: 8px; left: 10px; font-family: 'Noto Sans Runic', var(--font-display), serif; }
 .panel-corner.tr{ top: 8px; right: 10px; font-family: 'Noto Sans JP', sans-serif; color: var(--rune); opacity: 0.45; }
 .panel-corner.bl{ bottom: 8px; left: 10px; font-family: 'Noto Sans JP', sans-serif; color: var(--rune); opacity: 0.4; }
 .panel-corner.br{ bottom: 8px; right: 10px; font-family: 'Noto Sans Runic', var(--font-display), serif; }
+.panel-corner.tr:hover,
+.panel-corner.bl:hover{ color: var(--rune-bright); opacity: 1; }
 
 /* hint diapositiva */
 .slide-hint{
@@ -1526,6 +1536,29 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     return title ? ` data-ekana-tip="${esc(title)}" title="${esc(title)}"` : '';
   }
 
+  function applyEkanaTipsToDom(root){
+    const scope = root || document;
+    const sels = [
+      '.panel-corner',
+      '.nav-glyph',
+      '.skill-glyph',
+      '.node-glyph',
+      '.ch-glyph',
+      '.btn-glyph',
+      '.hero-kicker .rune',
+      '.footer-sigil .glyph'
+    ].join(',');
+    scope.querySelectorAll(sels).forEach(el => {
+      if(el.getAttribute('data-ekana-tip')) return;
+      const ch = String(el.textContent || '').trim();
+      if(!ch) return;
+      const title = formatEkanaTitle(ch);
+      if(!title) return;
+      el.setAttribute('data-ekana-tip', title);
+      el.setAttribute('title', title);
+    });
+  }
+
   function bindEkanaTips(){
     let tip = document.getElementById('ekana-float-tip');
     if(!tip){
@@ -2086,6 +2119,7 @@ window.__portfolioProfileReady = new Promise((resolve) => {
 
     renderNavFromSlides(flat);
     renderBlocksIntoSlides(blocks);
+    applyEkanaTipsToDom(document);
 
     // CTA: prefer slugs, else first slide with project/contact blocks
     const blocksBySlide = new Map();
@@ -2155,6 +2189,7 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     renderProfile(profileRows && profileRows[0]);
     renderTerminalSteps(terminalRows);
     if(!usedSlides) renderSectionLedes(ledesRows);
+    applyEkanaTipsToDom(document);
   })().finally(() => {
     window.__resolvePortfolioProfile?.();
     if(typeof window.__refreshDeck === 'function'){
