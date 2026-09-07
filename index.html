@@ -1609,6 +1609,19 @@ window.__portfolioProfileReady = new Promise((resolve) => {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 
+  // Anonymous visit: one row per browser-tab session (visited_at only)
+  (function recordPageView(){
+    try{
+      const host = String(location.hostname || '').toLowerCase();
+      const proto = String(location.protocol || '');
+      if(proto === 'file:' || host === 'localhost' || host === '127.0.0.1' || host === '[::1]') return;
+      if(sessionStorage.getItem('pv_recorded') === '1') return;
+      sb.from('page_views').insert({}).then(({ error }) => {
+        if(!error) sessionStorage.setItem('pv_recorded', '1');
+      }).catch(() => {});
+    }catch(_){ /* ignore */ }
+  })();
+
   function esc(v){
     return String(v ?? '')
       .replaceAll('&', '&amp;')
